@@ -162,7 +162,7 @@ class Loader extends PluginBase
 	public function onLoad(): void
 	{
 		self::$instance = $this;
-		self::$ench = new Enchantment(self::FAKE_ENCH_ID, "", 0, ItemFlags::AXE, ItemFlags::NONE, 1);
+		self::$ench = new Enchantment("", 0, ItemFlags::AXE, ItemFlags::NONE, 1);
 		$enchantmapinstance = EnchantmentIdMap::getInstance();
 		$enchantmapinstance->register(self::FAKE_ENCH_ID, self::$ench);
 		self::$shapeRegistry = new ShapeRegistry();
