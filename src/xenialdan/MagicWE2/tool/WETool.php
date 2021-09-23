@@ -8,5 +8,4 @@ abstract class WETool
 {
 
 	abstract public function getName(): string;
-
 }
