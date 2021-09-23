@@ -6,6 +6,7 @@ namespace xenialdan\MagicWE2;
 
 use InvalidArgumentException;
 use jackmd\scorefactory\ScoreFactory;
+use JetBrains\PhpStorm\Pure;
 use JsonException;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\block\Block;
@@ -134,16 +135,14 @@ class Loader extends PluginBase
 		throw new ShapeRegistryException("Shape registry is not initialized");
 	}
 
-	public static function getRotFlipPath(): string
+	#[Pure] public static function getRotFlipPath(): string
 	{
-		return self::$rotPath;
-		#return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
+		return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
 	}
 
-	public static function getDoorRotFlipPath(): string
+	#[Pure] public static function getDoorRotFlipPath(): string
 	{
-		return self::$doorRotPath;
-		#return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
+		return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
 	}
 
 	/**
@@ -172,8 +171,6 @@ class Loader extends PluginBase
 		#$this->saveResource("rotation_flip_data.json", true);
 		$this->saveResource("blockstate_alias_map.json", true);
 
-		self::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
-		self::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
 		$blockstateparserInstance = BlockStatesParser::getInstance();
 		$blockstateparserInstance::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
 		$blockstateparserInstance::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
