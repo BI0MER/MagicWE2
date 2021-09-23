@@ -6,7 +6,6 @@ namespace xenialdan\MagicWE2;
 
 use InvalidArgumentException;
 use jackmd\scorefactory\ScoreFactory;
-use JetBrains\PhpStorm\Pure;
 use JsonException;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\block\Block;
@@ -135,14 +134,16 @@ class Loader extends PluginBase
 		throw new ShapeRegistryException("Shape registry is not initialized");
 	}
 
-	#[Pure] public static function getRotFlipPath(): string
+	public static function getRotFlipPath(): string
 	{
-		return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
+		return self::$rotPath;
+		#return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
 	}
 
-	#[Pure] public static function getDoorRotFlipPath(): string
+	public static function getDoorRotFlipPath(): string
 	{
-		return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
+		return self::$doorRotPath;
+		#return self::getInstance()->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
 	}
 
 	/**
@@ -171,9 +172,10 @@ class Loader extends PluginBase
 		#$this->saveResource("rotation_flip_data.json", true);
 		$this->saveResource("blockstate_alias_map.json", true);
 
+		self::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
+		self::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
 		$blockstateparserInstance = BlockStatesParser::getInstance();
-		$blockstateparserInstance::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
-		$blockstateparserInstance::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
+		$blockstateparserInstance->loadLegacyMappings();
 
 		$fileGetContents = file_get_contents($this->getDataFolder() . "blockstate_alias_map.json");
 		if ($fileGetContents === false) {
@@ -181,7 +183,6 @@ class Loader extends PluginBase
 		}
 
 		$blockstateparserInstance->setAliasMap(json_decode($fileGetContents, true, 512, JSON_THROW_ON_ERROR));
-		//$blockstateparserInstance::runTests();//TODO REMOVE, DEBUG!!!!!!!
 
 		self::$assetCollection = new AssetCollection(new PluginSession($this));
 	}
