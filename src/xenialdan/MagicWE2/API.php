@@ -312,8 +312,8 @@ class API
 	{
 		$shapeClass = $brush->properties->shape;
 		/** @var Shape $shape */
-		$shape = new $shapeClass($target->getPos()->asVector3(), ...array_values($brush->properties->shapeProperties));
-		$selection = new Selection($session->getUUID(), $target->getPos()->getWorld());
+		$shape = new $shapeClass($target->getPosition()->asVector3(), ...array_values($brush->properties->shapeProperties));
+		$selection = new Selection($session->getUUID(), $target->getPosition()->getWorld());
 		$selection->setShape($shape);
 		$actionClass = $brush->properties->action;
 		//TODO remove hack
@@ -557,7 +557,7 @@ class API
 	 */
 	public static function setComponents(Block $block, int $x, int $y, int $z): Block
 	{
-		[$block->getPos()->x, $block->getPos()->y, $block->getPos()->z] = [$x, $y, $z];
+		[$block->getPosition()->x, $block->getPosition()->y, $block->getPosition()->z] = [$x, $y, $z];
 		return $block;
 	}
 
