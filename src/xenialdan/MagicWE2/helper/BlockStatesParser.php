@@ -53,7 +53,7 @@ final class BlockStatesParser
 	public static string $doorRotPath = "";
 
 	/** @var R12ToCurrentBlockMapEntry[][] *///TODO check type correct? phpstan!
-	private static array $legacyStateMap;
+	private static array $legacyStateMap = [];
 
 	/** @var array */
 	private static array $aliasMap = [];
@@ -70,7 +70,6 @@ final class BlockStatesParser
 		$this->loadRotationAndFlipData(Loader::getRotFlipPath());
 		$this->loadDoorRotationAndFlipData(Loader::getDoorRotFlipPath());
 
-		self::$legacyStateMap = [];
 		$contents = file_get_contents(RESOURCE_PATH . "vanilla/r12_to_current_block_map.bin");
 		if ($contents === false) throw new PluginException("Can not get contents of r12_to_current_block_map");
 		$legacyStateMapReader = PacketSerializer::decoder(file_get_contents(Path::join(RESOURCE_PATH, "vanilla", "r12_to_current_block_map.bin")), 0, new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary()));
