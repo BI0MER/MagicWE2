@@ -47,6 +47,11 @@ final class BlockStatesParser
 {
 	use SingletonTrait;
 
+	/** @var string */
+	public static string $rotPath = "";
+	/** @var string */
+	public static string $doorRotPath = "";
+
 	/** @var R12ToCurrentBlockMapEntry[][] *///TODO check type correct? phpstan!
 	private static array $legacyStateMap;
 

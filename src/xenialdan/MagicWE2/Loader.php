@@ -175,6 +175,8 @@ class Loader extends PluginBase
 		self::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
 		self::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
 		$blockstateparserInstance = BlockStatesParser::getInstance();
+		$blockstateparserInstance::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
+		$blockstateparserInstance::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
 		$blockstateparserInstance->loadLegacyMappings();
 
 		$fileGetContents = file_get_contents($this->getDataFolder() . "blockstate_alias_map.json");
