@@ -14,6 +14,7 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\ItemFlags;
 use pocketmine\lang\Language;
 use pocketmine\lang\LanguageNotFoundException;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginException;
 use pocketmine\scheduler\ClosureTask;
@@ -340,6 +341,7 @@ class Loader extends PluginBase
 		$this->wailaBossBar->setPercentage(1.0);
 		//WAILA updater
 		$this->getScheduler()->scheduleDelayedRepeatingTask(new ClosureTask(function (): void {
+			/** @var Player[] $players */
 			$players = Loader::getInstance()->wailaBossBar->getPlayers();
 			foreach ($players as $player) {
 				if (!$player->isOnline() || !SessionHelper::hasSession($player) || (($session = SessionHelper::getUserSession($player)) instanceof UserSession && !$session->isWailaEnabled())) {
@@ -354,7 +356,7 @@ class Loader extends PluginBase
 					if ($stateEntry instanceof BlockStatesEntry) {
 						$sub = implode("," . TF::EOL, explode(",", BlockStatesParser::printStates($stateEntry, false)));
 					}
-					$distancePercentage = round(floor($block->getPos()->distance($player->getEyePos())) / 10, 1);
+					$distancePercentage = round(floor($block->getPosition()->distance($player->getEyePos())) / 10, 1);
 					Loader::getInstance()->wailaBossBar->setTitleFor([$player], $title)->setSubTitleFor([$player], $sub)->setPercentage($distancePercentage);
 				} else
 					Loader::getInstance()->wailaBossBar->hideFrom([$player]);
