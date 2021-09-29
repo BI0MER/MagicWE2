@@ -44,7 +44,8 @@ class WeightedRandom
 	{
 		$sum = array_sum($this->probabilities);
 		foreach ($this->probabilities as &$weight) {
-			$weight /= $sum;
+			if(!is_null($weight) && !is_null($sum))
+				$weight /= $sum;
 		}
 	}
 
