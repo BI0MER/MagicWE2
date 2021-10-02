@@ -22,14 +22,14 @@ class WeightedRandom
 	/** @var Random */
 	private Random $random;
 
-	/** @var mixed[] */
+	/** @var array */
 	protected array $indexes = [];
 
 	/**
 	 * @param mixed $value
 	 * @param float $weight
 	 */
-	public function add($value, float $weight): void
+	public function add(mixed $value, float $weight): void
 	{
 		$this->probabilities[] = $weight;
 		$this->indexes[] = $value;
@@ -43,6 +43,7 @@ class WeightedRandom
 	private function normalize(): void
 	{
 		$sum = array_sum($this->probabilities);
+		if($sum < 1) return;
 		foreach ($this->probabilities as &$weight) {
 			if(!is_null($weight) && !is_null($sum))
 				$weight /= $sum;
