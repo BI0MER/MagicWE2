@@ -54,7 +54,7 @@ final class BlockStatesParser
 	public static string $doorRotPath = "";
 
 	/** @var R12ToCurrentBlockMapEntry[][] *///TODO check type correct? phpstan!
-	private static array $legacyStateMap;
+	private static array $legacyStateMap = [];
 
 	/** @var array */
 	private static array $aliasMap = [];
@@ -63,18 +63,14 @@ final class BlockStatesParser
 	/** @var array */
 	private static array $doorRotationFlipMap = [];
 
-	private function __construct()
+	/**
+	 * @throws JsonException
+	 */
+	public function loadLegacyMappings(): void
 	{
 		$this->loadRotationAndFlipData(Loader::getRotFlipPath());
 		$this->loadDoorRotationAndFlipData(Loader::getDoorRotFlipPath());
-		//$this->loadRotationAndFlipData(self::$rotPath);
-		//$this->loadDoorRotationAndFlipData(self::$doorRotPath);
-		$this->loadLegacyMappings();
-	}
 
-	private function loadLegacyMappings(): void
-	{
-		self::$legacyStateMap = [];
 		$contents = file_get_contents(RESOURCE_PATH . "vanilla/r12_to_current_block_map.bin");
 		if ($contents === false) throw new PluginException("Can not get contents of r12_to_current_block_map");
 		$legacyStateMapReader = PacketSerializer::decoder(file_get_contents(Path::join(RESOURCE_PATH, "vanilla", "r12_to_current_block_map.bin")), 0, new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary()));
@@ -399,129 +395,7 @@ final class BlockStatesParser
 			}
 		}
 	}
-
-	public static function runTests(): void
-	{
-		var_dump("Running tests");
-		//testing blockstate parser
-		$tests = [
-			"minecraft:tnt",
-			#"minecraft:wood",
-			#"minecraft:log",
-			"minecraft:wooden_slab",
-			"minecraft:wooden_slab_wrongname",
-			"minecraft:wooden_slab[foo=bar]",
-			"minecraft:wooden_slab[top_slot_bit=]",
-			"minecraft:wooden_slab[top_slot_bit=true]",
-			"minecraft:wooden_slab[top_slot_bit=false]",
-			"minecraft:wooden_slab[wood_type=oak]",
-			#"minecraft:wooden_slab[wood_type=spruce]",
-			"minecraft:wooden_slab[wood_type=spruce,top_slot_bit=false]",
-			"minecraft:wooden_slab[wood_type=spruce,top_slot_bit=true]",
-			"minecraft:end_rod[]",
-			"minecraft:end_rod[facing_direction=1]",
-			"minecraft:end_rod[block_light_level=14]",
-			"minecraft:end_rod[block_light_level=13]",
-			"minecraft:light_block[block_light_level=14]",
-			"minecraft:stone[]",
-			"minecraft:stone[stone_type=granite]",
-			"minecraft:stone[stone_type=andesite]",
-			"minecraft:stone[stone_type=wrongtag]",//seems to just not find a block at all. neat!
-			#//alias testing
-			"minecraft:wooden_slab[top=true]",
-			"minecraft:wooden_slab[top=true,type=spruce]",
-			"minecraft:stone[type=granite]",
-			"minecraft:bedrock[burn=true]",
-			"minecraft:lever[direction=1]",
-			"minecraft:wheat[growth=3]",
-			"minecraft:stone_button[direction=1,pressed=true]",
-			"minecraft:stone_button[direction=0]",
-			"minecraft:stone_brick_stairs[direction=0]",
-			"minecraft:trapdoor[direction=0,open_bit=true,upside_down_bit=false]",
-			"minecraft:birch_door",
-			"minecraft:iron_door[direction=1]",
-			"minecraft:birch_door[upper_block_bit=true]",
-			"minecraft:birch_door[direction=1,door_hinge_bit=false,open_bit=false,upper_block_bit=true]",
-			"minecraft:birch_door[door_hinge_bit=false,open_bit=true,upper_block_bit=true]",
-			"minecraft:birch_door[direction=3,door_hinge_bit=false,open_bit=true,upper_block_bit=true]",
-			"minecraft:campfire",
-		];
-		foreach ($tests as $test) {
-			try {
-				Loader::getInstance()->getLogger()->debug(TF::GOLD . "Search query: " . TF::LIGHT_PURPLE . $test);
-				foreach (BlockPalette::fromString($test)->palette() as $block) {
-					assert($block instanceof Block);
-					$blockStatesEntry = self::getStateByBlock($block);
-					if ($blockStatesEntry !== null) {
-						Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . self::printStates($blockStatesEntry, true));
-						Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . self::printStates($blockStatesEntry, false));
-					}
-					Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . "Final block: " . TF::AQUA . $block);
-				}
-			} catch (Exception $e) {
-				Server::getInstance()->getLogger()->debug($e->getMessage());
-				continue;
-			}
-		}
-		//return;//TODO
-		//test flip+rotation
-		// $tests2 = [
-		// 	#"minecraft:wooden_slab[wood_type=oak]",
-		// 	#"minecraft:wooden_slab[wood_type=spruce,top_slot_bit=true]",
-		// 	#"minecraft:end_rod[]",
-		// 	#"minecraft:end_rod[facing_direction=1]",
-		// 	#"minecraft:end_rod[facing_direction=2]",
-		// 	#"minecraft:stone_brick_stairs[direction=0]",
-		// 	#"minecraft:stone_brick_stairs[direction=1]",
-		// 	#"minecraft:stone_brick_stairs[direction=1,upside_down_bit=true]",
-		// 	#"stone_brick_stairs[direction=1,upside_down_bit=true]",
-		// 	#"minecraft:ladder[facing_direction=3]",
-		// 	#"minecraft:magenta_glazed_terracotta[facing_direction=2]",
-		// 	#"minecraft:trapdoor[direction=3,open_bit=true,upside_down_bit=false]",
-		// 	#"minecraft:birch_door",
-		// 	#"minecraft:birch_door[direction=1]",
-		// 	#"minecraft:birch_door[direction=1,door_hinge_bit=false,open_bit=false,upper_block_bit=true]",
-		// 	#"minecraft:birch_door[door_hinge_bit=false,open_bit=true,upper_block_bit=true]",
-		// 	"minecraft:birch_door[direction=3,door_hinge_bit=false,open_bit=true,upper_block_bit=true]",
-		// ];
-		// foreach ($tests2 as $test) {
-		// 	try {
-		// 		Server::getInstance()->getLogger()->debug(TF::GOLD . "Rotation query: " . TF::LIGHT_PURPLE . $test);
-		// 		$block = self::fromString($test)[0];
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . "From block: " . TF::AQUA . $block);
-		// 		$state = self::getStateByBlock($block)->rotate(90);
-		// 		assert($state->toBlock() instanceof Block);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . "Rotated block: " . TF::AQUA . $state->toBlock());
-
-		// 		Server::getInstance()->getLogger()->debug(TF::GOLD . "Mirror query x: " . TF::LIGHT_PURPLE . $test);
-		// 		$state = self::getStateByBlock($block)->mirror("x");
-		// 		assert($state->toBlock() instanceof Block);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . "Flipped block x: " . TF::AQUA . $state->toBlock());
-
-		// 		Server::getInstance()->getLogger()->debug(TF::GOLD . "Mirror query y: " . TF::LIGHT_PURPLE . $test);
-		// 		$state = self::getStateByBlock($block)->mirror("y");
-		// 		assert($state->toBlock() instanceof Block);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . "Flipped block y: " . TF::AQUA . $state->toBlock());
-		// 	} catch (Exception $e) {
-		// 		Server::getInstance()->getLogger()->debug($e->getMessage());
-		// 		continue;
-		// 	}
-		// }
-		// //test doors because WTF they are weird
-		// try {
-		// 	for ($i = 0; $i < 15; $i++) {
-		// 		$block = BlockFactory::getInstance()->get(BlockLegacyIds::IRON_DOOR_BLOCK, $i);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . $block);
-		// 		$entry = self::getStateByBlock($block);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . $entry);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . $entry->blockStates);
-		// 		Server::getInstance()->getLogger()->debug(TF::LIGHT_PURPLE . self::printStates($entry, false));
-		// 	}
-		// } catch (Exception $e) {
-		// 	Server::getInstance()->getLogger()->debug($e->getMessage());
-		// }
-	}
-
+	
 	public static function placeAllBlockstates(Position $position): void
 	{
 		$pasteY = $position->getFloorY();

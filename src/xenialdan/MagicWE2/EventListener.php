@@ -268,7 +268,6 @@ class EventListener implements Listener
 				}
 				default:
 				{
-					var_dump($event->getItem());
 					$event->cancel();
 					break;
 				}
@@ -342,7 +341,6 @@ class EventListener implements Listener
 			if (!$session instanceof UserSession) return;
 			$target = $event->getPlayer()->getTargetBlock(Loader::getInstance()->getToolDistance());
 			$brush = $session->getBrushes()->getBrushFromItem($event->getItem());
-			var_dump(json_encode($brush, JSON_THROW_ON_ERROR));
 			if ($brush instanceof Brush && !is_null($target)) {// && has perms
 				API::createBrush($target, $brush, $session);
 			}
@@ -397,7 +395,6 @@ class EventListener implements Listener
 	 */
 	public function onChangeSlot(PlayerItemHeldEvent $event): void
 	{
-		var_dump($event->getSlot());
 		$player = $event->getPlayer();
 		#$item = $player->getInventory()->getItemInHand();
 		$item = $player->getInventory()->getItem($event->getSlot());
@@ -407,7 +404,6 @@ class EventListener implements Listener
 			if ($item->getId() === ItemIds::SCAFFOLDING) {
 				$filename = $tag->getString('filename');
 				$asset = Loader::$assetCollection->assets[$filename];//TODO allow private assets again
-				var_dump($filename, $asset);
 				#$assets = AssetCollection::getInstance()->getPlayerAssets($player->getXuid());
 				$session->displayOutline = true;
 				#foreach ($assets as $asset) {
@@ -432,7 +428,6 @@ class EventListener implements Listener
 
 	public static function sendOutline(Player $player, Position $target, Asset $asset, UserSession $session): bool
 	{
-		var_dump(__METHOD__);
 		#$start = clone $target->asVector3()->floor()->addVector($asset->getOrigin())->floor();//start pos of paste//TODO if using rotate, this fails
 		#$end = $start->addVector($asset->getSize()->subtractVector($asset->getOrigin()));//add size
 		//[$target->x,$target->y,$target->z] = [($v=$target->asVector3())->getFloorX(),$v->getFloorY(),$v->getFloorZ()];
@@ -446,13 +441,10 @@ class EventListener implements Listener
 		$minComponents = new Vector3($ix, $iy, $iz);
 		$maxComponents = new Vector3($ax, $ay, $az);
 		$block = BlockFactory::getInstance()->get(BlockLegacyIds::STRUCTURE_BLOCK, 0/*StructureEditorData::TYPE_SAVE*/);
-		var_dump((string)$block);
 		$target->world->setBlock($target->asVector3(), $block);
-		var_dump("placing block", __METHOD__, (string)$target->world->getBlock($target->asVector3()));
 		/** @var null|StructureBlockTile $tile */
 		$tile = $target->world->getTile($target->asVector3());
 		if ($tile instanceof StructureBlockTile) {
-			var_dump($tile->getSpawnCompound()->toString());
 			$tile
 				->setFromV3($minComponents)
 				->setToV3($maxComponents)
@@ -465,9 +457,7 @@ class EventListener implements Listener
 				->setHideStructureBlock(false);
 			$tile->saveNBT();
 			#$target->getWorld()->scheduleDelayedBlockUpdate($target, 1);
-			var_dump($tile->getSpawnCompound()->toString());
 		} else {
-			var_dump("no tile");
 			return false;
 		}
 
@@ -479,10 +469,8 @@ class EventListener implements Listener
 		//$player = $event->getPlayer();
 		$blockTouched = $event->getBlock();
 		if ($blockTouched->getId() === BlockLegacyIds::STRUCTURE_BLOCK) {
-			var_dump("Clicked Structure Block", (string)$blockTouched);
 			$tile = $blockTouched->getPosition()->getWorld()->getTile($blockTouched->getPosition()->asVector3());
 			if ($tile instanceof StructureBlockTile) {
-				var_dump("Is Structure Block Tile", $tile->getSpawnCompound()->toString());
 //				$item = $player->getInventory()->getItemInHand();
 //				if (!is_null(($tag = $item->getNamedTag()->getCompoundTag(API::TAG_MAGIC_WE_ASSET)))) {
 //					$session = SessionHelper::getUserSession($player);
@@ -498,10 +486,8 @@ class EventListener implements Listener
 //						$pk->isPowered = false;
 //						$player->getNetworkSession()->sendDataPacket($pk);
 //						$tile->sendInventory($player);
-//						var_dump($tile->getSpawnCompound()->toString(), $inventory);
 //					}
 //				}
-				var_dump($blockTouched);
 			}
 		}
 

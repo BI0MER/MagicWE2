@@ -95,8 +95,9 @@ class AsyncReplaceTask extends MWEAsyncTask
 	 * @param BlockPalette $replaceBlocks
 	 * @param BlockPalette $newBlocks
 	 * @param null|int $changed
+	 *
 	 * @return Generator
-	 * @throws InvalidArgumentException
+	 * @throws InvalidArgumentException|Exception
 	 * @phpstan-return Generator<int, array{int, Position|null}, void, void>
 	 */
 	private function execute(Selection $selection, AsyncChunkManager $manager, BlockPalette $replaceBlocks, BlockPalette $newBlocks, ?int &$changed): Generator
@@ -141,7 +142,7 @@ class AsyncReplaceTask extends MWEAsyncTask
 	}
 
 	/**
-	 * @throws AssumptionFailedError
+	 * @throws AssumptionFailedError|Exception
 	 */
 	public function onCompletion(): void
 	{

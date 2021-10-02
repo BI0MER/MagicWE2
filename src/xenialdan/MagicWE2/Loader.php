@@ -15,6 +15,7 @@ use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\ItemFlags;
 use pocketmine\lang\Language;
 use pocketmine\lang\LanguageNotFoundException;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginException;
 use pocketmine\scheduler\ClosureTask;
@@ -177,6 +178,7 @@ class Loader extends PluginBase
 		$blockstateparserInstance = BlockStatesParser::getInstance();
 		$blockstateparserInstance::$rotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "rotation_flip_data.json";
 		$blockstateparserInstance::$doorRotPath = $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "door_data.json";
+		$blockstateparserInstance->loadLegacyMappings();
 
 		$fileGetContents = file_get_contents($this->getDataFolder() . "blockstate_alias_map.json");
 		if ($fileGetContents === false) {
@@ -184,7 +186,6 @@ class Loader extends PluginBase
 		}
 
 		$blockstateparserInstance->setAliasMap(json_decode($fileGetContents, true, 512, JSON_THROW_ON_ERROR));
-		//$blockstateparserInstance::runTests();//TODO REMOVE, DEBUG!!!!!!!
 
 		self::$assetCollection = new AssetCollection(new PluginSession($this));
 	}
@@ -341,6 +342,7 @@ class Loader extends PluginBase
 		$this->wailaBossBar->setPercentage(1.0);
 		//WAILA updater
 		$this->getScheduler()->scheduleDelayedRepeatingTask(new ClosureTask(function (): void {
+			/** @var Player[] $players */
 			$players = Loader::getInstance()->wailaBossBar->getPlayers();
 			foreach ($players as $player) {
 				if (!$player->isOnline() || !SessionHelper::hasSession($player) || (($session = SessionHelper::getUserSession($player)) instanceof UserSession && !$session->isWailaEnabled())) {

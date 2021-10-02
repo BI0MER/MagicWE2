@@ -70,7 +70,7 @@ class AsyncPasteAssetTask extends MWEAsyncTask
 	 *
 	 * @return void
 	 * @throws InvalidArgumentException
-	 * @throws OutOfBoundsException
+	 * @throws OutOfBoundsException|Exception
 	 */
 	public function onRun(): void
 	{
@@ -101,9 +101,10 @@ class AsyncPasteAssetTask extends MWEAsyncTask
 	 * @param AsyncChunkManager $manager
 	 * @param Asset $asset
 	 * @param null|int $changed
+	 *
 	 * @return Generator
 	 * @throws InvalidArgumentException
-	 * @throws OutOfBoundsException
+	 * @throws OutOfBoundsException|Exception
 	 * @phpstan-return Generator<int, array{int, Position|null}, void, void>
 	 */
 	private function execute(AsyncChunkManager $manager, Asset $asset, ?int &$changed): Generator
@@ -197,7 +198,7 @@ class AsyncPasteAssetTask extends MWEAsyncTask
 	}
 
 	/**
-	 * @throws AssumptionFailedError
+	 * @throws AssumptionFailedError|Exception
 	 */
 	public function onCompletion(): void
 	{

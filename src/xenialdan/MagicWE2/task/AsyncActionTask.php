@@ -117,7 +117,7 @@ class AsyncActionTask extends MWEAsyncTask
 	}
 
 	/**
-	 * @throws AssumptionFailedError
+	 * @throws AssumptionFailedError|Exception
 	 */
 	public function onCompletion(): void
 	{

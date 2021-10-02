@@ -106,8 +106,9 @@ class AsyncFillTask extends MWEAsyncTask
 	 * @param AsyncChunkManager $manager
 	 * @param BlockPalette $newBlocks
 	 * @param null|int $changed
+	 *
 	 * @return Generator
-	 * @throws InvalidArgumentException
+	 * @throws InvalidArgumentException|Exception
 	 * @phpstan-return Generator<int, array{int, Position|null}, void, void>
 	 */
 	private function execute(Selection $selection, AsyncChunkManager $manager, BlockPalette $newBlocks, ?int &$changed): Generator
@@ -158,7 +159,7 @@ class AsyncFillTask extends MWEAsyncTask
 	}
 
 	/**
-	 * @throws AssumptionFailedError
+	 * @throws AssumptionFailedError|Exception
 	 */
 	public function onCompletion(): void
 	{
